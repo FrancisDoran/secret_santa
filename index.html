@@ -30,10 +30,19 @@
         <input type="number" id="keyInput" placeholder="Enter your key">
         <button onclick="revealSanta()">Reveal</button>
     </div>
+
     <div id="result" style="margin-top: 20px; font-size: 1.5em; color: green;"></div>
+
+    <!-- Music Player -->
+    <audio id="radioPlayer" controls autoplay>
+        <source src="https://www.accuradio.com/channel/4e38562a77d9e746360001ed" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
 
     <script>
         async function revealSanta() {
+            const button = document.querySelector('button');
+            button.disabled = true; // Disable button
             const key = parseInt(document.getElementById('keyInput').value);
             const resultDiv = document.getElementById('result');
 
@@ -51,6 +60,8 @@
             } catch (error) {
                 resultDiv.innerText = "Error loading Secret Santa pairs. Please try again later.";
                 console.error(error);
+            } finally {
+                button.disabled = false; // Re-enable button
             }
         }
 
