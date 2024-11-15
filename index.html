@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secret Santa</title>
+    <style>
+        /* Festive styling */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f5;
+            color: #333;
+            text-align: center;
+            padding: 2em;
+            background-image: url('https://linktoyourfestivebackground.jpg');
+            background-size: cover;
+        }
+        .input-area {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Secret Santa 🎅</h1>
+    <p>Enter your Secret Santa key to find out who you’re buying for!</p>
+
+    <div class="input-area">
+        <input type="number" id="keyInput" placeholder="Enter your key">
+        <button onclick="revealSanta()">Reveal</button>
+    </div>
+
+    <div id="result" style="margin-top: 20px; font-size: 1.5em; color: green;"></div>
+
+    <script>
+        const oakland = ['francis', 'pat', 'suz', 'matt'];
+        const broomfield = ['linda', 'ed'];
+        const palm_springs = ['eddie', 'domo'];
+        const lafayette = ['mary', 'isaac', 'adrian', 'dusk'];
+        const fam = [oakland, broomfield, palm_springs, lafayette];
+
+        let pairs = {};
+        let picked = [];
+
+        // Helper function to get a random integer up to max (exclusive)
+        function randint(max) {
+            return Math.floor(Math.random() * max);
+        }
+
+        // Initialize pairs based on your original structure
+        function assignPairs() {
+            for (let i = 0; i < fam.length; i++) {
+                for (let person of fam[i]) {
+                    let n, pick;
+                    let attemptCount = 0;
+                    while (true) {
+                        n = (i + randint(fam.length - 1) + 1) % fam.length; // pick a different family unit
+                        pick = fam[n][randint(fam[n].length)];
+                        if (!picked.includes(pick)) {
+                            break;
+                        }
+                        attemptCount++;
+                        if (attemptCount > 100) {
+                            throw "Code is broken. Please check assignments!";
+                        }
+                    }
+                    pairs[person] = pick;
+                    picked.push(pick);
+                }
+            }
+        }
+
+        assignPairs();
+
+        // Anonymize pairs for key-based lookup
+        const lockedPairs = Object.fromEntries(Object.keys(pairs).map((person, i) => [i, pairs[person]]));
+
+        // Function to display Secret Santa result
+        function revealSanta() {
+            const key = parseInt(document.getElementById('keyInput').value);
+            const result = lockedPairs[key];
+            const resultDiv = document.getElementById('result');
+            
+            if (result) {
+                resultDiv.innerText = `Your Secret Santa match is: ${result}! 🎁`;
+            } else {
+                resultDiv.innerText = "Invalid key. Please try again.";
+            }
+        }
+    </script>
+
+</body>
+</html>
