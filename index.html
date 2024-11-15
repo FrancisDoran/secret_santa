@@ -40,7 +40,7 @@
     <div id="result" style="margin-top: 20px; font-size: 1.5em; color: green;"></div>
 
     <h2>Holiday Playlist 🎵</h2>
-    <audio id="musicPlayer" controls autoplay>
+    <audio id="musicPlayer" muted>
         <source src="" type="audio/mp4">
         Your browser does not support the audio element.
     </audio>
@@ -304,6 +304,10 @@
             musicPlayer.play();
         }
 
+        function unmute() {
+            musicPlayer.muted = false;
+        }
+
         // Automatically play the next song when the current song ends
         musicPlayer.addEventListener('ended', () => {
             const currentIndex = songs.findIndex(song => song.url === musicPlayer.src);
@@ -313,6 +317,7 @@
 
         // Start the playlist by playing the first song
         playSong(0);
+        unmute();
     </script>
 </body>
 </html>
