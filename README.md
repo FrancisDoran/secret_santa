@@ -1,5 +1,3 @@
----
-
 # Secret Santa with Festive Reveal 🎅
 
 This project is a combination of a Secret Santa CLI script and a festive website for displaying results. Participants are randomly matched, ensuring no direct family members are paired. The result is revealed through an interactive website with a holiday-themed video and playlist.
