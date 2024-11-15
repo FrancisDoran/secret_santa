@@ -7,16 +7,41 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            text-align: center;
+            margin: 0;
+            overflow: hidden; /* Hide scrollbars during video */
             height: 100vh;
             display: flex;
-            flex-direction: column;
-            justify-content: flex-start;
+            justify-content: center;
             align-items: center;
             background-color: #f0f0f5;
             background-image: url('resources/1288376.jpg');
             background-size: cover;
-            padding: 200px;
+        }
+        #videoContainer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+        }
+        video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Ensures video fills the viewport */
+            cursor: pointer;
+        }
+        #content {
+            display: absolute;
+            text-align: center;
+            padding: 20px;
+            max-width: 800px;
         }
         .input-area {
             margin-top: 20px;
@@ -25,28 +50,53 @@
             margin-top: 30px;
             width: 80%;
         }
-        #playlist {
-            display: none; /* Hide the playlist */
+        button {
+            margin-top: 15px;
+            padding: 10px 20px;
+            font-size: 1em;
+            background-color: green;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: darkgreen;
         }
     </style>
 </head>
 <body>
-
-    <h1>Secret Santa 🎅</h1>
-    <p>Enter your key to find out who you’re buying for!</p>
-    <div class="input-area">
-        <input type="number" id="keyInput" placeholder="Enter your key">
-        <button onclick="revealSanta()">Reveal</button>
+    <!-- Video Section -->
+    <div id="videoContainer">
+        <video id="presentVideo" playsinline>
+            <source src="resources/present.webm" type="video/webm">
+            Your browser does not support the video tag.
+        </video>
     </div>
-    <div id="result" style="margin-top: 20px; font-size: 1.5em; color: green;"></div>
 
-    <audio id="musicPlayer" autoplay muted>
-        <source src="" type="audio/mp4">
-        Your browser does not support the audio element.
-    </audio>
-    <button id="unmuteButton">Unmute Music</button>
-    <div id="playlist"></div> <!-- Hidden playlist -->
+    <!-- Main Content -->
+    <div id="content">
+        <h1>Secret Santa 🎅</h1>
+        <p>Enter your key to find out who you’re buying for!</p>
+        <div class="input-area">
+            <input type="number" id="keyInput" placeholder="Enter your key">
+            <button onclick="revealSanta()">Reveal</button>
+        </div>
+        <div id="result" style="margin-top: 20px; font-size: 1.5em; color: green;"></div>
+
+        <h2>Holiday Playlist 🎵</h2>
+        <audio id="musicPlayer" muted>
+            <source src="" type="audio/mp4">
+            Your browser does not support the audio element.
+        </audio>
+    </div>
+
     <script>
+        const videoContainer = document.getElementById('videoContainer');
+        const presentVideo = document.getElementById('presentVideo');
+        const content = document.getElementById('content');
+        const musicPlayer = document.getElementById('musicPlayer');
+
         // Secret Santa functionality
         async function revealSanta() {
             const button = document.querySelector('button');
@@ -72,6 +122,7 @@
         }
 
         // Playlist functionality
+
         const songs = [
             { title:'0', url: 'https://d1qg6pckcqcdk0.cloudfront.net/xmas/starlightersthe_acapitolchristmasvolume2_10_ivegotmylovetokeepmewarm.m4a' },
             { title:'1', url: 'https://d1qg6pckcqcdk0.cloudfront.net/xmas/autrygene_rudolphtherednosedreindeer_08_thenightbeforechristmassong.m4a' },
@@ -283,20 +334,13 @@
             { title:'207', url: 'https://d1qg6pckcqcdk0.cloudfront.net/xmas/edwardstommy_christmasonthetown_07_kriskringle.m4a' },
         ];
 
-        const musicPlayer = document.getElementById('musicPlayer');
-        const playlistDiv = document.getElementById('playlist');
-        const unmuteButton = document.getElementById('unmuteButton');
-
         // Shuffle the playlist
         function shuffleArray(array) {
             for (let i = array.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
-                [array[i], array[j]] = [array[j], array[i]]; // Swap elements
+                [array[i], array[j]] = [array[j], array[i]];
             }
         }
-
-        // Shuffle the songs array and hide the playlist
-        shuffleArray(songs);
 
         // Play the first song in the shuffled playlist
         function playSong(index) {
@@ -305,26 +349,26 @@
             musicPlayer.play();
         }
 
-        function unmute() {
-            musicPlayer.muted = false;
-        }
-
-        // Automatically play the next song when the current song ends
+        // Play the next song in the playlist
         musicPlayer.addEventListener('ended', () => {
             const currentIndex = songs.findIndex(song => song.url === musicPlayer.src);
-            const nextIndex = (currentIndex + 1) % songs.length; // Loop to start
+            const nextIndex = (currentIndex + 1) % songs.length;
             playSong(nextIndex);
         });
 
-
-        unmuteButton.addEventListener('click', () => {
-                    musicPlayer.muted = false;
-                    unmuteButton.style.display = 'none'; // Hide the button after unmuting
+        // Transition after video click
+        presentVideo.addEventListener('click', () => {
+            presentVideo.play();
+            musicPlayer.muted = false; // Unmute music
+            shuffleArray(songs);
+            playSong(0);
         });
 
-        // Start the playlist by playing the first song
-        playSong(0);
-        //unmute();
+        // Hide video and show content after it finishes
+        presentVideo.addEventListener('ended', () => {
+            videoContainer.style.display = 'none'; // Hide video container
+            content.style.display = 'block'; // Show content
+        });
     </script>
 </body>
 </html>
