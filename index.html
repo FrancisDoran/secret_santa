@@ -84,7 +84,7 @@
         </div>
         <div id="result" style="margin-top: 20px; font-size: 1.5em; color: green;"></div>
 
-        <h2>Holiday Playlist 🎵</h2>
+        <button id="newSong" disabled>New Song 🎵</button>
         <audio id="musicPlayer" muted>
             <source src="" type="audio/mp4">
             Your browser does not support the audio element.
@@ -96,6 +96,7 @@
         const presentVideo = document.getElementById('presentVideo');
         const content = document.getElementById('content');
         const musicPlayer = document.getElementById('musicPlayer');
+        const newSong = document.getElementById("newSong")
 
         // Secret Santa functionality
         async function revealSanta() {
@@ -356,18 +357,32 @@
             playSong(nextIndex);
         });
 
+        // Flag to track if the video has already been clicked
+        let videoClicked = false;
+
         // Transition after video click
         presentVideo.addEventListener('click', () => {
-            presentVideo.play();
-            musicPlayer.muted = false; // Unmute music
-            shuffleArray(songs);
-            playSong(0);
+            if (!videoClicked) {
+                videoClicked = true; // Set the flag to true
+                presentVideo.play();
+                musicPlayer.muted = false; // Unmute music
+                shuffleArray(songs);
+                playSong(0);
+            }
         });
 
         // Hide video and show content after it finishes
         presentVideo.addEventListener('ended', () => {
             videoContainer.style.display = 'none'; // Hide video container
             content.style.display = 'block'; // Show content
+            newSong.disabled = false;
+
+        newSong.addEventListener('click', () => {
+            const currentIndex = songs.findIndex(song => song.url === musicPlayer.src);
+            const nextIndex = (currentIndex + 1) % songs.length;
+            playSong(nextIndex);
+        });
+
         });
     </script>
 </body>
