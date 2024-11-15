@@ -12,11 +12,11 @@ units = {1:[]}
 user_input = input(' [1] New\n [2] Load\n')
 while True:
 
-	if user_input in ['1', '2', '3']:
+	if user_input in ['1', '2']:
 		break
 	else:
 		b+=1
-		print('Please input, 1, 2, or 3')
+		print('Please input 1 or 2')
 		if b > 10:
 			user_input = '1'
 		else:
