@@ -297,7 +297,7 @@
         // Generate playlist
         songs.forEach((song, index) => {
             const link = document.createElement('a');
-            link.textContent = `${index + 1}. ${song.title}`;
+           // link.textContent = `${index + 1}. ${song.title}`;
             link.href = "#";
             link.dataset.index = index;
             link.addEventListener('click', (event) => {
