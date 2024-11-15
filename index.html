@@ -5,21 +5,35 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Secret Santa</title>
     <style>
-        /* Styling as previously described */
         body {
             font-family: Arial, sans-serif;
             text-align: center;
             height: 100vh;
             display: flex;
             flex-direction: column;
-            justify-content: center;
+            justify-content: flex-start;
             align-items: center;
             background-color: #f0f0f5;
             background-image: url('resources/1288376.jpg');
             background-size: cover;
+            padding: 20px;
         }
         .input-area {
             margin-top: 20px;
+        }
+        audio {
+            margin-top: 30px;
+            width: 80%;
+        }
+        #playlist a {
+            display: block;
+            margin: 5px 0;
+            text-decoration: none;
+            color: green;
+            font-size: 1.2em;
+        }
+        #playlist a:hover {
+            text-decoration: underline;
         }
     </style>
 </head>
@@ -30,16 +44,17 @@
         <input type="number" id="keyInput" placeholder="Enter your key">
         <button onclick="revealSanta()">Reveal</button>
     </div>
-
     <div id="result" style="margin-top: 20px; font-size: 1.5em; color: green;"></div>
 
-    <!-- Music Player -->
-    <audio id="radioPlayer" controls autoplay>
-        <source src="https://d1qg6pckcqcdk0.cloudfront.net/xmas/sinatrafrank_thesinatrachristm_11thechristmaswaltz.m4a" type="audio/mpeg">
+    <h2>Holiday Playlist 🎵</h2>
+    <audio id="musicPlayer" controls>
+        <source src="" type="audio/mp4">
         Your browser does not support the audio element.
     </audio>
+    <div id="playlist"></div>
 
     <script>
+        // Secret Santa functionality
         async function revealSanta() {
             const button = document.querySelector('button');
             button.disabled = true; // Disable button
@@ -47,11 +62,9 @@
             const resultDiv = document.getElementById('result');
 
             try {
-                // Fetch the pairs.json file
                 const response = await fetch('data/pairs.json');
                 const lockedPairs = await response.json();
 
-                // Display the result
                 if (lockedPairs[key] !== undefined) {
                     resultDiv.innerText = `Your Secret Santa match is: ${lockedPairs[key]}! 🎁`;
                 } else {
@@ -65,7 +78,45 @@
             }
         }
 
+        // Playlist functionality
+        const songs = [
+            { title: "The Christmas Waltz - Frank Sinatra", url: "https://d1qg6pckcqcdk0.cloudfront.net/xmas/sinatrafrank_thesinatrachristm_11thechristmaswaltz.m4a" },
+            { title: "Deck the Halls", url: "https://d1qg6pckcqcdk0.cloudfront.net/christian/faithpercy_musicofchristma_03_deckthehallswithboug.m4a" },
+            { title: "I'll Be Home for Christmas", url: "https://d1qg6pckcqcdk0.cloudfront.net/christian/presleyelvis_elvischristmasa_04_illbehomeforchristma.m4a" },
+            { title: "Greensleeves", url: "https://d1qg6pckcqcdk0.cloudfront.net/easy/conniffray_christmaswithco_06_greensleeveswhatchil.m4a" },
+            { title: "Sleigh Ride", url: "https://d1qg6pckcqcdk0.cloudfront.net/xmas/andersonleroy_sleighrideandot_01_sleighride.m4a" }
+        ];
+
+        const musicPlayer = document.getElementById('musicPlayer');
+        const playlistDiv = document.getElementById('playlist');
+
+        // Generate playlist
+        songs.forEach((song, index) => {
+            const link = document.createElement('a');
+            link.textContent = `${index + 1}. ${song.title}`;
+            link.href = "#";
+            link.dataset.index = index;
+            link.addEventListener('click', (event) => {
+                event.preventDefault();
+                playSong(event.target.dataset.index);
+            });
+            playlistDiv.appendChild(link);
+            playlistDiv.appendChild(document.createElement('br'));
+        });
+
+        // Play selected song
+        function playSong(index) {
+            const song = songs[index];
+            musicPlayer.src = song.url;
+            musicPlayer.play();
+        }
+
+        // Automatically play the next song when current song ends
+        musicPlayer.addEventListener('ended', () => {
+            const currentIndex = songs.findIndex(song => song.url === musicPlayer.src);
+            const nextIndex = (currentIndex + 1) % songs.length; // Loop to start
+            playSong(nextIndex);
+        });
     </script>
 </body>
 </html>
-
