@@ -25,15 +25,8 @@
             margin-top: 30px;
             width: 80%;
         }
-        #playlist a {
-            display: block;
-            margin: 5px 0;
-            text-decoration: none;
-            color: green;
-            font-size: 1.2em;
-        }
-        #playlist a:hover {
-            text-decoration: underline;
+        #playlist {
+            display: none; /* Hide the playlist */
         }
     </style>
 </head>
@@ -47,11 +40,11 @@
     <div id="result" style="margin-top: 20px; font-size: 1.5em; color: green;"></div>
 
     <h2>Holiday Playlist 🎵</h2>
-    <audio id="musicPlayer" controls>
+    <audio id="musicPlayer" controls autoplay>
         <source src="" type="audio/mp4">
         Your browser does not support the audio element.
     </audio>
-    <div id="playlist"></div>
+    <div id="playlist"></div> <!-- Hidden playlist -->
 
     <script>
         // Secret Santa functionality
@@ -288,39 +281,38 @@
             { title:'205', url: 'https://d1qg6pckcqcdk0.cloudfront.net/xmas/conniffandthera_wewishyouamerry_05_thetwelvedaysofchris.m4a' },
             { title:'206', url: 'https://d1qg6pckcqcdk0.cloudfront.net/xmas/millermitch_holidaysingalon_14_deckthehallswithboug.m4a' },
             { title:'207', url: 'https://d1qg6pckcqcdk0.cloudfront.net/xmas/edwardstommy_christmasonthetown_07_kriskringle.m4a' },
-
         ];
 
         const musicPlayer = document.getElementById('musicPlayer');
         const playlistDiv = document.getElementById('playlist');
 
-        // Generate playlist
-        songs.forEach((song, index) => {
-            const link = document.createElement('a');
-            link.textContent = `${index + 1}. ${song.title}`;
-            link.href = "#";
-            link.dataset.index = index;
-            link.addEventListener('click', (event) => {
-                event.preventDefault();
-                playSong(event.target.dataset.index);
-            });
-            playlistDiv.appendChild(link);
-            playlistDiv.appendChild(document.createElement('br'));
-        });
+        // Shuffle the playlist
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]]; // Swap elements
+            }
+        }
 
-        // Play selected song
+        // Shuffle the songs array and hide the playlist
+        shuffleArray(songs);
+
+        // Play the first song in the shuffled playlist
         function playSong(index) {
             const song = songs[index];
             musicPlayer.src = song.url;
             musicPlayer.play();
         }
 
-        // Automatically play the next song when current song ends
+        // Automatically play the next song when the current song ends
         musicPlayer.addEventListener('ended', () => {
             const currentIndex = songs.findIndex(song => song.url === musicPlayer.src);
             const nextIndex = (currentIndex + 1) % songs.length; // Loop to start
             playSong(nextIndex);
         });
+
+        // Start the playlist by playing the first song
+        playSong(0);
     </script>
 </body>
 </html>
