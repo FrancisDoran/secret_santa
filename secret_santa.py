@@ -122,7 +122,7 @@ while i < 25:
 			raise RuntimeError("Failed to generate valid pairs after 25 attempts.")
 # Anonymize pairs with keys
 locked_pairs = dict(zip(range(len(all_fam)), pairs.values()))
-print(dict(zip(range(len(all_fam)), pairs.keys())))
+print('Distribute the key #s to individual participants:\n',dict(zip(range(len(all_fam)), pairs.keys())))
 # print(pairs)
 # Save to a JSON file
 with open("data/pairs.json", "w") as f:
