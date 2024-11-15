@@ -15,7 +15,7 @@
             justify-content: center;
             align-items: center;
             background-color: #f0f0f5;
-            background-image: url('path_to_your_festive_background.jpg');
+            background-image: 'resources/1288376.jpg';
             background-size: cover;
         }
         .input-area {
@@ -33,50 +33,24 @@
     <div id="result" style="margin-top: 20px; font-size: 1.5em; color: green;"></div>
 
     <script>
-        // Insert the JavaScript code here
-        // Secret Santa Script in JavaScript
-        const oakland = ['francis', 'pat', 'suz', 'matt'];
-        const broomfield = ['linda', 'ed'];
-        const palm_springs = ['eddie', 'domo'];
-        const lafayette = ['mary', 'isaac', 'adrian', 'dusk'];
-
-        const fam = [oakland, broomfield, palm_springs, lafayette];
-        const allFam = oakland.concat(broomfield, palm_springs, lafayette);
-
-        let pairs = {};
-        let picked = [];
-
-        // Function to pick valid matches
-        function getValidPick(excludeFam) {
-            const validPicks = allFam.filter(p => !picked.includes(p) && !excludeFam.includes(p));
-            return validPicks[Math.floor(Math.random() * validPicks.length)];
-        }
-
-        // Assign pairs
-        fam.forEach(group => {
-            group.forEach(person => {
-                const pick = getValidPick(group);
-                pairs[person] = pick;
-                picked.push(pick);
-            });
-        });
-
-        // Anonymize pairs with keys
-        const lockedPairs = {};
-        Object.keys(pairs).forEach((person, index) => {
-            lockedPairs[index] = pairs[person];
-        });
-
-        // Function to handle user input and reveal results
-        function revealSanta() {
+        async function revealSanta() {
             const key = parseInt(document.getElementById('keyInput').value);
-            const result = lockedPairs[key];
             const resultDiv = document.getElementById('result');
 
-            if (result) {
-                resultDiv.innerText = `Your Secret Santa match is: ${result}! 🎁`;
-            } else {
-                resultDiv.innerText = "Invalid key. Please try again.";
+            try {
+                // Fetch the pairs.json file
+                const response = await fetch('data/pairs.json');
+                const lockedPairs = await response.json();
+
+                // Display the result
+                if (lockedPairs[key] !== undefined) {
+                    resultDiv.innerText = `Your Secret Santa match is: ${lockedPairs[key]}! 🎁`;
+                } else {
+                    resultDiv.innerText = "Invalid key. Please try again.";
+                }
+            } catch (error) {
+                resultDiv.innerText = "Error loading Secret Santa pairs. Please try again later.";
+                console.error(error);
             }
         }
 
