@@ -23,7 +23,6 @@ for i in range(4):
 				break
 		pairs[person]=pick
 		picked.append(pick)
-print(pairs.keys())
 key = input("Enter your key:\n")
 key = int(key)
 locked_pairs = dict(zip(range(12),pairs.values()))
